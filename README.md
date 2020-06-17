@@ -1,4 +1,3 @@
-[![docker pulls](https://img.shields.io/docker/pulls/haxqer/jira.svg)](https://hub.docker.com/r/haxqer/jira/)  [![docker stars](https://img.shields.io/docker/stars/haxqer/jira.svg)](https://hub.docker.com/r/haxqer/jira/) [![image metadata](https://images.microbadger.com/badges/image/haxqer/jira.svg)](https://microbadger.com/images/haxqer/jira "haxqer/jira image metadata")
 
 # jira
 default port: 8080
@@ -12,7 +11,7 @@ default port: 8080
 - start jira & mysql
 
 ```
-    git clone https://github.com/haxqer/jira.git \
+    git clone https://github.com/dreammis/jira.git \
         && cd jira \
         && docker-compose up
 ```
@@ -39,7 +38,7 @@ default port: 8080
 - start jira
 
 ```
-    docker run -p 8080:8080 -v jira_home_data:/var/jira --network jira-network --name jira-srv -e TZ='Asia/Shanghai' haxqer/jira
+    docker run -p 8080:8080 -v jira_home_data:/var/jira --network jira-network --name jira-srv -e TZ='Asia/Shanghai' dreammis/jira
 ```
 
 - config your own db:
