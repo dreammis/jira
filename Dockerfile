@@ -1,11 +1,11 @@
 FROM openjdk:8-stretch
 
-LABEL maintainer="haxqer <haxqer666@gmail.com>" version="8.8.1"
+LABEL maintainer="Pookz <hysn2001@gmail.com>" version="8.8.1"
 
 ARG JIRA_VERSION=8.8.1
 # Production: jira-software jira-core
 ARG JIRA_PRODUCT=jira-software
-ARG AGENT_VERSION=1.2.2
+ARG AGENT_VERSION=3
 ARG MYSQL_DRIVER_VERSION=5.1.48
 
 ENV JIRA_USER=jira \
@@ -14,9 +14,14 @@ ENV JIRA_USER=jira \
     JIRA_INSTALL=/opt/jira \
     JVM_MINIMUM_MEMORY=1g \
     JVM_MAXIMUM_MEMORY=3g \
-    JVM_CODE_CACHE_ARGS='-XX:InitialCodeCacheSize=1g -XX:ReservedCodeCacheSize=2g'
+    JVM_CODE_CACHE_ARGS='-XX:InitialCodeCacheSize=1g -XX:ReservedCodeCacheSize=2g' \
+    AGENT_PATH=/var/agent \
+    AGENT_FILENAME=atlassian-agent.jar
 
-RUN mkdir -p ${JIRA_INSTALL} ${JIRA_HOME} \
+ENV JAVA_OPTS="-javaagent:${AGENT_PATH}/${AGENT_FILENAME} ${JAVA_OPTS}"
+
+RUN mkdir -p ${JIRA_INSTALL} ${JIRA_HOME} ${AGENT_PATH} \
+&& curl -o ${AGENT_PATH}/${AGENT_FILENAME}  https://github.com/dreammis/jira/releases/download/v${AGENT_VERSION}/atlassian-agent.jar -L \
 && curl -o /tmp/atlassian.tar.gz https://product-downloads.atlassian.com/software/jira/downloads/atlassian-${JIRA_PRODUCT}-${JIRA_VERSION}.tar.gz -L \
 && tar xzf /tmp/atlassian.tar.gz -C ${JIRA_INSTALL}/ --strip-components 1 \
 && rm -f /tmp/atlassian.tar.gz \
@@ -26,7 +31,7 @@ RUN mkdir -p ${JIRA_INSTALL} ${JIRA_HOME} \
 RUN export CONTAINER_USER=$JIRA_USER \
 && export CONTAINER_GROUP=$JIRA_GROUP \
 && groupadd -r $JIRA_GROUP && useradd -r -g $JIRA_GROUP $JIRA_USER \
-&& chown -R $JIRA_USER:$JIRA_GROUP ${JIRA_INSTALL} ${JIRA_HOME}/
+&& chown -R $JIRA_USER:$JIRA_GROUP ${JIRA_INSTALL} ${JIRA_HOME}/ ${AGENT_PATH}
 
 VOLUME $JIRA_HOME
 USER $JIRA_USER
